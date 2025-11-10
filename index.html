@@ -260,7 +260,7 @@
         }
 
         .ticket-preview {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary);
             color: white;
             padding: 24px;
             border-radius: 12px;
@@ -431,19 +431,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        /* PDF specific styles */
-        .ticket-preview-pdf {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            width: 500px;
-            min-height: 700px;
-            margin: 0 auto;
-            box-sizing: border-box;
-        }
     </style>
 </head>
 <body>
@@ -613,9 +600,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Hidden div for PDF generation -->
-    <div id="pdfTemplate" class="hidden"></div>
 
     <script>
         // Initialize EmailJS with your keys
@@ -996,78 +980,38 @@ Venue: Echo Lounge, Kisii`;
                 downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
                 downloadBtn.disabled = true;
 
-                // Create a dedicated PDF template to ensure full capture
-                const pdfTemplate = document.getElementById('pdfTemplate');
-                pdfTemplate.innerHTML = `
-                    <div class="ticket-preview-pdf" id="pdfTicket">
-                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
-                             alt="Man Sango Concert" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
-                        
-                        <div style="margin-bottom: 20px;">
-                            <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
-                                 alt="Man Sango" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #f59e0b; margin: 0 auto 10px;">
-                            <h2 style="font-size: 1.4rem; margin-bottom: 4px; color: #f59e0b;">MAN SANGO CONCERT</h2>
-                            <p style="opacity: 0.9; font-size: 0.9rem;">Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;">
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Reference</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">${currentTicketData.reference}</span>
-                            </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Name</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">${currentTicketData.customer_name}</span>
-                            </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Phone</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">${currentTicketData.customer_phone}</span>
-                            </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Type</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">${currentTicketData.ticket_type}</span>
-                            </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Quantity</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">${currentTicketData.quantity}</span>
-                            </div>
-                            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; text-align: left;">
-                                <label style="display: block; font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">Amount</label>
-                                <span style="font-size: 0.95rem; font-weight: 600;">KSH ${currentTicketData.total_amount}</span>
-                            </div>
-                        </div>
-                        
-                        <div style="margin: 20px auto; width: 160px; height: 160px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 8px; padding: 10px;">
-                            ${document.getElementById('qrCode').innerHTML}
-                        </div>
-                        
-                        <div style="margin-top: 20px; font-size: 0.8rem; opacity: 0.8;">
-                            <p>Present this ticket at venue entry • Non-transferable</p>
-                        </div>
-                    </div>
-                `;
-
-                const pdfElement = document.getElementById('pdfTicket');
+                // Use the existing ticket preview directly
+                const ticketElement = document.getElementById('ticketPreview');
                 
-                // Wait for images to load
-                await waitForImages(pdfElement);
+                // Ensure all images are loaded
+                await waitForImages(ticketElement);
 
-                const canvas = await html2canvas(pdfElement, {
-                    scale: 2,
+                // Create a simple canvas capture with minimal settings
+                const canvas = await html2canvas(ticketElement, {
+                    scale: 1, // Lower scale for reliability
                     useCORS: true,
                     logging: false,
-                    backgroundColor: null,
-                    width: pdfElement.offsetWidth,
-                    height: pdfElement.offsetHeight,
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: pdfElement.scrollWidth,
-                    windowHeight: pdfElement.scrollHeight
+                    backgroundColor: '#2563eb',
+                    removeContainer: true,
+                    allowTaint: false,
+                    foreignObjectRendering: false
                 });
 
-                const imgData = canvas.toDataURL('image/png', 1.0);
-                
-                // Use A6 format for ticket size
+                // Verify canvas is valid
+                if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                    throw new Error('Canvas rendering failed');
+                }
+
+                // Convert to data URL with error handling
+                let imgData;
+                try {
+                    imgData = canvas.toDataURL('image/jpeg', 0.9); // Use JPEG for better compatibility
+                } catch (e) {
+                    // Fallback to PNG if JPEG fails
+                    imgData = canvas.toDataURL('image/png');
+                }
+
+                // Create PDF with A6 format
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
@@ -1077,26 +1021,110 @@ Venue: Echo Lounge, Kisii`;
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 
-                // Add ticket image to fit the entire PDF page
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
+                // Add image to PDF
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                 
-                // Save PDF
+                // Save the PDF
                 pdf.save(`ManSango_Ticket_${currentTicketData.reference}.pdf`);
                 
                 showStatus('PDF downloaded successfully!', 'success');
                 
             } catch (error) {
-                console.error('PDF error:', error);
-                showStatus('Error generating PDF: ' + error.message, 'error');
+                console.error('PDF generation error:', error);
+                
+                // Try alternative method if the first fails
+                try {
+                    await downloadPDFAlternative();
+                } catch (altError) {
+                    console.error('Alternative PDF method also failed:', altError);
+                    showStatus('Error generating PDF. Please try again.', 'error');
+                }
             } finally {
                 // Reset download button
                 const downloadBtn = document.getElementById('downloadPDF');
                 downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
                 downloadBtn.disabled = false;
-                
-                // Clean up
-                document.getElementById('pdfTemplate').innerHTML = '';
             }
+        }
+
+        // Alternative PDF generation method
+        async function downloadPDFAlternative() {
+            const ticketElement = document.getElementById('ticketPreview');
+            
+            // Create a simple HTML structure for the PDF
+            const pdfHTML = `
+                <div style="background: #2563eb; color: white; padding: 20px; border-radius: 12px; font-family: Arial, sans-serif; width: 500px;">
+                    <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                         style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #f59e0b; margin: 0 auto 10px;">
+                        <h2 style="font-size: 1.4rem; margin-bottom: 4px; color: #f59e0b;">MAN SANGO CONCERT</h2>
+                        <p style="opacity: 0.9; font-size: 0.9rem;">Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;">
+                        ${createDetailHTML('Reference', currentTicketData.reference)}
+                        ${createDetailHTML('Name', currentTicketData.customer_name)}
+                        ${createDetailHTML('Phone', currentTicketData.customer_phone)}
+                        ${createDetailHTML('Type', currentTicketData.ticket_type)}
+                        ${createDetailHTML('Quantity', currentTicketData.quantity)}
+                        ${createDetailHTML('Amount', `KSH ${currentTicketData.total_amount}`)}
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="background: white; padding: 10px; border-radius: 8px; display: inline-block;">
+                            ${document.getElementById('qrCode').innerHTML}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; font-size: 0.8rem; opacity: 0.8; margin-top: 20px;">
+                        <p>Present this ticket at venue entry • Non-transferable</p>
+                    </div>
+                </div>
+            `;
+
+            // Create temporary element
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = pdfHTML;
+            document.body.appendChild(tempDiv);
+
+            try {
+                await waitForImages(tempDiv);
+                
+                const canvas = await html2canvas(tempDiv.firstElementChild, {
+                    scale: 1,
+                    useCORS: true,
+                    backgroundColor: '#2563eb'
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a6'
+                });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`ManSango_Ticket_${currentTicketData.reference}_alt.pdf`);
+                
+            } finally {
+                document.body.removeChild(tempDiv);
+            }
+        }
+
+        function createDetailHTML(label, value) {
+            return `
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 4px;">${label}</div>
+                    <div style="font-size: 0.95rem; font-weight: 600;">${value}</div>
+                </div>
+            `;
         }
 
         // Helper function to wait for images to load
