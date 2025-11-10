@@ -267,6 +267,9 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .ticket-header {
@@ -517,12 +520,13 @@
                 </h2>
                 
                 <div class="ticket-preview" id="ticketPreview">
-                    <!-- Event Image -->
-                    <img src="https://vsxlzihjcmgkjqcpsrkc.supabase.co/storage/v1/object/public/pictures/WhatsApp%20Image%202025-11-08%20at%202.53.41%20PM.jpeg" 
+                    <!-- Event Image - UPDATED URL -->
+                    <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
                          alt="Man Sango Concert" class="event-image">
                     
                     <div class="ticket-header">
-                        <img src="https://vsxlzihjcmgkjqcpsrkc.supabase.co/storage/v1/object/public/pictures/1000032621.jpg" 
+                        <!-- Artist Image - UPDATED URL -->
+                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
                              alt="Man Sango" class="artist-image">
                         <h2>MAN SANGO CONCERT</h2>
                         <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
@@ -901,7 +905,7 @@ Venue: Echo Lounge, Kisii`;
                 total_amount: ticketData.total_amount.toString(),
                 qr_code_url: qrCodeDataURL,
                 reply_to: 'noreply@mansango.com',
-                download_link: `https://your-website.com/tickets/${ticketData.reference}` // You can customize this
+                download_link: `https://your-website.com/tickets/${ticketData.reference}`
             };
 
             console.log('Template params:', templateParams);
@@ -980,33 +984,39 @@ Venue: Echo Lounge, Kisii`;
                 downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
                 downloadBtn.disabled = true;
 
+                // Wait for images to load
+                await waitForImages(ticketElement);
+
                 const canvas = await html2canvas(ticketElement, {
-                    scale: 3, // Higher scale for better quality
+                    scale: 2, // Optimal scale for quality vs performance
                     useCORS: true,
                     logging: false,
                     backgroundColor: null,
-                    width: ticketElement.offsetWidth,
-                    height: ticketElement.offsetHeight
+                    width: ticketElement.scrollWidth,
+                    height: ticketElement.scrollHeight,
+                    onclone: function(clonedDoc) {
+                        const clonedElement = clonedDoc.getElementById('ticketPreview');
+                        if (clonedElement) {
+                            clonedElement.style.width = '500px';
+                            clonedElement.style.maxWidth = '500px';
+                        }
+                    }
                 });
 
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 
+                // Calculate PDF dimensions to maintain aspect ratio
+                const pdfWidth = 105; // A6 width in mm
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                
                 const pdf = new jsPDF({
-                    orientation: 'portrait',
+                    orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
                     unit: 'mm',
-                    format: [90, 130] // Custom size similar to A6
+                    format: [pdfWidth, pdfHeight]
                 });
 
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                
                 // Add ticket image
                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                
-                // Add download timestamp
-                pdf.setFontSize(8);
-                pdf.setTextColor(100);
-                pdf.text(`Generated: ${new Date().toLocaleString()}`, 5, pdfHeight - 5);
                 
                 // Save PDF
                 pdf.save(`ManSango_Ticket_${currentTicketData.reference}.pdf`);
@@ -1015,13 +1025,29 @@ Venue: Echo Lounge, Kisii`;
                 
             } catch (error) {
                 console.error('PDF error:', error);
-                showStatus('Error generating PDF', 'error');
+                showStatus('Error generating PDF: ' + error.message, 'error');
             } finally {
                 // Reset download button
                 const downloadBtn = document.getElementById('downloadPDF');
                 downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
                 downloadBtn.disabled = false;
             }
+        }
+
+        // Helper function to wait for images to load
+        function waitForImages(element) {
+            const images = element.getElementsByTagName('img');
+            const promises = Array.from(images).map(img => {
+                if (img.complete) {
+                    return Promise.resolve();
+                } else {
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve; // Resolve even if image fails to load
+                    });
+                }
+            });
+            return Promise.all(promises);
         }
 
         async function loadStats() {
