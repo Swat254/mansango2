@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- ZXing Library for QR Code Scanning -->
+    <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -440,6 +442,7 @@
             background: var(--light-bg);
             border-radius: 12px;
             margin: 20px 0;
+            position: relative;
         }
 
         .camera-preview {
@@ -453,6 +456,40 @@
             align-items: center;
             justify-content: center;
             color: var(--text-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            top: 50%;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 10%; }
+            50% { top: 90%; }
+            100% { top: 10%; }
         }
 
         .ticket-info {
@@ -589,6 +626,11 @@
         .verification-label {
             font-size: 0.7rem;
             color: var(--text-light);
+        }
+
+        .scanner-active {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
         @media (max-width: 480px) {
@@ -786,17 +828,21 @@
                         <div style="text-align: center;">
                             <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i>
                             <div>Camera Preview</div>
+                            <div style="font-size: 0.8rem; margin-top: 5px;">Click Start Camera to begin scanning</div>
                         </div>
                     </div>
                     <button class="btn btn-primary" id="startCamera">
                         <i class="fas fa-camera"></i>
                         Start Camera for QR Scan
                     </button>
+                    <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-light);">
+                        <i class="fas fa-info-circle"></i> Point camera at QR code for automatic detection
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="referenceInput">Or Enter Reference Number</label>
-                    <input type="text" id="referenceInput" class="form-input" placeholder="Enter ticket reference (e.g., MS-20251212-ABCDE)">
+                    <label class="form-label" for="referenceInput">Enter Order Reference Number</label>
+                    <input type="text" id="referenceInput" class="form-input" placeholder="Enter order reference (e.g., MS-20251212-ABCDE)">
                 </div>
                 
                 <button class="btn btn-primary" id="verifyTicket">
@@ -826,7 +872,7 @@
                     <h3 style="margin-bottom: 15px; color: var(--primary);">Ticket Details</h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <div class="info-label">Reference</div>
+                            <div class="info-label">Order Reference</div>
                             <div class="info-value" id="detailReference">-</div>
                         </div>
                         <div class="info-item">
@@ -895,20 +941,28 @@
         // PDF Library
         const { jsPDF } = window.jspdf;
 
+        // ZXing QR Code Scanner
+        const { BrowserQRCodeReader } = ZXing;
+
         // Global variables
         let currentTicketData = {};
         let currentVerificationTicket = null;
         let stream = null;
+        let codeReader = null;
+        let isScanning = false;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadStats();
             loadVerificationStats();
             setupEventListeners();
             startRealTimeUpdates();
             
             // Pre-select first ticket option
             document.querySelector('.ticket-option').click();
+            
+            // Initialize QR code reader
+            codeReader = new BrowserQRCodeReader();
+            console.log('ZXing QR Code Reader initialized');
         });
 
         function setupEventListeners() {
@@ -977,7 +1031,7 @@
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
             try {
-                const reference = generateReference();
+                const orderRef = generateReference();
                 
                 currentTicketData = {
                     customer_name: name,
@@ -986,19 +1040,21 @@
                     ticket_type: selectedOption.getAttribute('data-type'),
                     quantity: parseInt(document.getElementById('quantity').value),
                     total_amount: parseInt(document.getElementById('totalAmount').textContent),
-                    reference: reference,
+                    order_ref: orderRef, // Changed from 'reference' to 'order_ref'
                     payment_method: 'manual',
-                    status: 'pending', // Changed from 'confirmed' to 'pending' for verification
+                    status: 'pending',
                     created_at: new Date().toISOString()
                 };
 
+                // Store in ticket_orders table with order_ref
                 const { data, error } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .insert([currentTicketData])
                     .select();
 
                 if (error) throw error;
 
+                console.log('Ticket saved to ticket_orders:', data);
                 updateTicketPreview();
                 generateQRCodeWithDetails();
                 
@@ -1015,7 +1071,6 @@
                     }
                 }
                 
-                await loadStats();
                 await loadVerificationStats();
                 
                 if (emailSent) {
@@ -1036,7 +1091,7 @@
         }
 
         function updateTicketPreview() {
-            document.getElementById('previewRef').textContent = currentTicketData.reference;
+            document.getElementById('previewRef').textContent = currentTicketData.order_ref;
             document.getElementById('previewName').textContent = currentTicketData.customer_name;
             document.getElementById('previewPhone').textContent = currentTicketData.customer_phone;
             document.getElementById('previewType').textContent = currentTicketData.ticket_type;
@@ -1049,7 +1104,7 @@
             qrContainer.innerHTML = '';
             
             const qrData = `MAN SANGO CONCERT
-Reference: ${currentTicketData.reference}
+Reference: ${currentTicketData.order_ref}
 Name: ${currentTicketData.customer_name}
 Phone: ${currentTicketData.customer_phone}
 Type: ${currentTicketData.ticket_type}
@@ -1077,7 +1132,7 @@ Venue: Echo Lounge, Kisii`;
                 qrContainer.innerHTML = `
                     <div style="color: #666; text-align: center; padding: 20px;">
                         <div style="font-size: 0.9rem; margin-bottom: 10px;">
-                            <strong>${currentTicketData.reference}</strong>
+                            <strong>${currentTicketData.order_ref}</strong>
                         </div>
                         <div style="font-size: 0.7rem;">
                             ${currentTicketData.customer_name}<br>
@@ -1108,7 +1163,7 @@ Venue: Echo Lounge, Kisii`;
         async function generateQRCodePNG(ticketData) {
             return new Promise((resolve) => {
                 const qrData = `MAN SANGO CONCERT
-Reference: ${ticketData.reference}
+Reference: ${ticketData.order_ref}
 Name: ${ticketData.customer_name}
 Phone: ${ticketData.customer_phone}
 Type: ${ticketData.ticket_type}
@@ -1163,7 +1218,7 @@ Venue: Echo Lounge, Kisii`;
                 to_email: customerEmail,
                 email: customerEmail,
                 from_name: 'Man Sango Concert',
-                ticket_reference: ticketData.reference,
+                ticket_reference: ticketData.order_ref,
                 customer_name: ticketData.customer_name,
                 customer_phone: ticketData.customer_phone,
                 ticket_type: ticketData.ticket_type,
@@ -1171,7 +1226,7 @@ Venue: Echo Lounge, Kisii`;
                 total_amount: ticketData.total_amount.toString(),
                 qr_code_url: qrCodeDataURL,
                 reply_to: 'noreply@mansango.com',
-                download_link: `https://your-website.com/tickets/${ticketData.reference}`
+                download_link: `https://your-website.com/tickets/${ticketData.order_ref}`
             };
 
             console.log('Template params:', templateParams);
@@ -1235,7 +1290,7 @@ Venue: Echo Lounge, Kisii`;
         }
 
         async function downloadPDF() {
-            if (!currentTicketData.reference) {
+            if (!currentTicketData.order_ref) {
                 showStatus('Please generate a ticket first', 'error');
                 return;
             }
@@ -1294,7 +1349,7 @@ Venue: Echo Lounge, Kisii`;
                 
                 pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
                 
-                pdf.save(`ManSango_Ticket_${currentTicketData.reference}.pdf`);
+                pdf.save(`ManSango_Ticket_${currentTicketData.order_ref}.pdf`);
                 
                 showStatus('PDF downloaded successfully!', 'success');
                 
@@ -1323,29 +1378,6 @@ Venue: Echo Lounge, Kisii`;
             return Promise.all(promises);
         }
 
-        async function loadStats() {
-            try {
-                const { count: totalCount, error: totalError } = await supabase
-                    .from('concert_tickets')
-                    .select('*', { count: 'exact', head: true });
-
-                if (totalError) throw totalError;
-
-                const { data: revenueData, error: revenueError } = await supabase
-                    .from('concert_tickets')
-                    .select('total_amount');
-
-                if (revenueError) throw revenueError;
-
-                const totalRevenue = revenueData.reduce((sum, ticket) => sum + ticket.total_amount, 0);
-
-                // Note: Today tickets removed as we have verification stats now
-
-            } catch (error) {
-                console.error('Error loading stats:', error);
-            }
-        }
-
         function showStatus(message, type) {
             const statusDiv = document.getElementById('formStatus');
             statusDiv.textContent = message;
@@ -1360,22 +1392,27 @@ Venue: Echo Lounge, Kisii`;
         // ========== VERIFICATION SYSTEM FUNCTIONS ==========
         async function verifyTicket() {
             const referenceInput = document.getElementById('referenceInput');
-            const reference = referenceInput.value.trim().toUpperCase();
+            const orderRef = referenceInput.value.trim().toUpperCase();
             
-            if (!reference) {
-                showVerificationResult('Please enter a reference number', 'error');
+            if (!orderRef) {
+                showVerificationResult('Please enter an order reference number', 'error');
                 return;
             }
 
+            await performVerification(orderRef);
+        }
+
+        async function performVerification(orderRef) {
             const verifyBtn = document.getElementById('verifyTicket');
             verifyBtn.classList.add('loading');
             verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
             try {
+                // Query ticket_orders table using order_ref column
                 const { data: tickets, error } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .select('*')
-                    .eq('reference', reference);
+                    .eq('order_ref', orderRef);
 
                 if (error) throw error;
 
@@ -1422,7 +1459,7 @@ Venue: Echo Lounge, Kisii`;
         }
 
         function displayTicketDetails(ticket) {
-            document.getElementById('detailReference').textContent = ticket.reference;
+            document.getElementById('detailReference').textContent = ticket.order_ref;
             document.getElementById('detailName').textContent = ticket.customer_name;
             document.getElementById('detailPhone').textContent = ticket.customer_phone;
             document.getElementById('detailType').textContent = ticket.ticket_type;
@@ -1475,18 +1512,18 @@ Venue: Echo Lounge, Kisii`;
 
             try {
                 const { data, error } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .update({ 
                         status: 'checked_in',
                         checked_in_at: new Date().toISOString(),
                         last_activity: new Date().toISOString()
                     })
-                    .eq('reference', currentVerificationTicket.reference)
+                    .eq('order_ref', currentVerificationTicket.order_ref)
                     .select();
 
                 if (error) throw error;
 
-                addToActivityLog(currentVerificationTicket.reference, 'checked_in', currentVerificationTicket.customer_name);
+                addToActivityLog(currentVerificationTicket.order_ref, 'checked_in', currentVerificationTicket.customer_name);
                 
                 showVerificationResult('Successfully checked in!', 'success');
                 currentVerificationTicket.status = 'checked_in';
@@ -1513,18 +1550,18 @@ Venue: Echo Lounge, Kisii`;
                 const nextStatus = currentVerificationTicket.status === 'checked_in' ? 'exited' : 'used';
                 
                 const { data, error } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .update({ 
                         status: nextStatus,
                         checked_out_at: new Date().toISOString(),
                         last_activity: new Date().toISOString()
                     })
-                    .eq('reference', currentVerificationTicket.reference)
+                    .eq('order_ref', currentVerificationTicket.order_ref)
                     .select();
 
                 if (error) throw error;
 
-                addToActivityLog(currentVerificationTicket.reference, nextStatus, currentVerificationTicket.customer_name);
+                addToActivityLog(currentVerificationTicket.order_ref, nextStatus, currentVerificationTicket.customer_name);
                 
                 showVerificationResult(`Successfully checked out! Status: ${nextStatus}`, 'success');
                 currentVerificationTicket.status = nextStatus;
@@ -1545,6 +1582,13 @@ Venue: Echo Lounge, Kisii`;
             resultDiv.textContent = message;
             resultDiv.className = `verification-result result-${type}`;
             resultDiv.classList.remove('hidden');
+            
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    resultDiv.classList.add('hidden');
+                }, 3000);
+            }
         }
 
         function resetTicketDetails() {
@@ -1554,16 +1598,16 @@ Venue: Echo Lounge, Kisii`;
 
         async function loadVerificationStats() {
             try {
-                // Get total tickets
+                // Get total tickets from ticket_orders using order_ref
                 const { count: totalCount, error: totalError } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .select('*', { count: 'exact', head: true });
 
                 if (totalError) throw totalError;
 
                 // Get checked in tickets
                 const { count: checkedInCount, error: checkedInError } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .select('*', { count: 'exact', head: true })
                     .eq('status', 'checked_in');
 
@@ -1571,7 +1615,7 @@ Venue: Echo Lounge, Kisii`;
 
                 // Calculate inside venue (checked_in - exited)
                 const { count: exitedCount, error: exitedError } = await supabase
-                    .from('concert_tickets')
+                    .from('ticket_orders')
                     .select('*', { count: 'exact', head: true })
                     .eq('status', 'exited');
 
@@ -1589,7 +1633,7 @@ Venue: Echo Lounge, Kisii`;
             }
         }
 
-        function addToActivityLog(reference, action, customerName) {
+        function addToActivityLog(orderRef, action, customerName) {
             const logContainer = document.getElementById('entryLog');
             const now = new Date();
             const timeString = now.toLocaleTimeString();
@@ -1605,7 +1649,7 @@ Venue: Echo Lounge, Kisii`;
             logItem.innerHTML = `
                 <div class="log-time">${timeString}</div>
                 <div class="log-action">${actionText}</div>
-                <div class="log-reference">${reference}</div>
+                <div class="log-reference">${orderRef}</div>
                 <div style="margin-left: auto; font-size: 0.7rem; color: var(--text-light);">
                     ${customerName}
                 </div>
@@ -1625,7 +1669,7 @@ Venue: Echo Lounge, Kisii`;
                     { 
                         event: '*', 
                         schema: 'public', 
-                        table: 'concert_tickets' 
+                        table: 'ticket_orders' 
                     }, 
                     (payload) => {
                         console.log('Real-time update:', payload);
@@ -1637,42 +1681,59 @@ Venue: Echo Lounge, Kisii`;
             setInterval(loadVerificationStats, 30000);
         }
 
+        // ========== ADVANCED QR CODE SCANNING ==========
         async function startCamera() {
             const cameraBtn = document.getElementById('startCamera');
             const cameraPreview = document.getElementById('cameraPreview');
+            const scanArea = document.querySelector('.scan-area');
             
             try {
                 if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                    cameraPreview.innerHTML = `
-                        <div style="text-align: center;">
-                            <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i>
-                            <div>Camera Preview</div>
-                        </div>
-                    `;
-                    cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+                    // Stop existing stream and scanning
+                    await stopCamera();
                     return;
                 }
 
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
-                });
+                // Camera constraints for better performance
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        frameRate: { ideal: 30 }
+                    }
+                };
+
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
                 
+                // Clear preview and setup video
                 cameraPreview.innerHTML = '';
                 const video = document.createElement('video');
+                video.id = 'qr-video';
                 video.srcObject = stream;
-                video.autoplay = true;
-                video.playsInline = true;
+                video.setAttribute('playsinline', 'true');
                 video.style.width = '100%';
                 video.style.height = '100%';
                 video.style.objectFit = 'cover';
-                video.style.borderRadius = '8px';
                 
                 cameraPreview.appendChild(video);
-                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
                 
-                simulateQRDetection(video);
+                // Add scanning overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'scan-overlay';
+                overlay.innerHTML = '<div class="scan-line"></div>';
+                cameraPreview.appendChild(overlay);
+                
+                // Update UI
+                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                scanArea.classList.add('scanner-active');
+                
+                // Wait for video to be ready
+                video.onloadedmetadata = () => {
+                    video.play().then(() => {
+                        startQRScanning(video);
+                    });
+                };
                 
             } catch (error) {
                 console.error('Camera error:', error);
@@ -1686,16 +1747,97 @@ Venue: Echo Lounge, Kisii`;
             }
         }
 
-        function simulateQRDetection(video) {
-            console.log('QR scanning simulation active - use reference input for actual verification');
-        }
-
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden && stream) {
+        async function stopCamera() {
+            if (stream) {
                 stream.getTracks().forEach(track => track.stop());
                 stream = null;
-                const cameraBtn = document.getElementById('startCamera');
-                cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+            }
+            
+            isScanning = false;
+            
+            const cameraPreview = document.getElementById('cameraPreview');
+            const cameraBtn = document.getElementById('startCamera');
+            const scanArea = document.querySelector('.scan-area');
+            
+            cameraPreview.innerHTML = `
+                <div style="text-align: center;">
+                    <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                    <div>Camera Preview</div>
+                    <div style="font-size: 0.8rem; margin-top: 5px;">Click Start Camera to begin scanning</div>
+                </div>
+            `;
+            
+            cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+            scanArea.classList.remove('scanner-active');
+        }
+
+        function startQRScanning(video) {
+            isScanning = true;
+            
+            const scanResult = async () => {
+                if (!isScanning) return;
+                
+                try {
+                    const result = await codeReader.decodeFromVideoDevice(null, video, (result, error) => {
+                        if (result) {
+                            console.log('QR Code detected:', result.getText());
+                            handleQRCodeDetected(result.getText());
+                        }
+                        
+                        if (error && !(error instanceof ZXing.NotFoundException)) {
+                            console.log('ZXing error:', error);
+                        }
+                        
+                        // Continue scanning
+                        if (isScanning) {
+                            requestAnimationFrame(scanResult);
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('QR scanning error:', error);
+                    if (isScanning) {
+                        setTimeout(scanResult, 100);
+                    }
+                }
+            };
+            
+            scanResult();
+        }
+
+        function handleQRCodeDetected(qrText) {
+            // Extract reference number from QR code text
+            const referenceMatch = qrText.match(/Reference:\s*([^\n]+)/);
+            if (referenceMatch) {
+                const orderRef = referenceMatch[1].trim();
+                document.getElementById('referenceInput').value = orderRef;
+                showVerificationResult(`QR Code detected: ${orderRef}`, 'success');
+                performVerification(orderRef);
+            } else {
+                // Try to find any MS- reference pattern
+                const msReference = qrText.match(/(MS-\d{8}-[A-Z0-9]{5})/);
+                if (msReference) {
+                    const orderRef = msReference[1];
+                    document.getElementById('referenceInput').value = orderRef;
+                    showVerificationResult(`QR Code detected: ${orderRef}`, 'success');
+                    performVerification(orderRef);
+                } else {
+                    showVerificationResult('QR Code detected but no valid reference found', 'error');
+                }
+            }
+        }
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && stream) {
+                stopCamera();
+            }
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            if (stream) {
+                stopCamera();
             }
         });
     </script>
