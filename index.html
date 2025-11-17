@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Man Sango Ticket Generator</title>
+    <title>Admin - Man Sango Ticket System</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        /* Your existing CSS remains exactly the same */
         :root {
             --primary: #2563eb;
             --primary-light: #3b82f6;
@@ -25,6 +24,7 @@
             --border: #e2e8f0;
             --success: #10b981;
             --error: #ef4444;
+            --warning: #f59e0b;
         }
 
         * {
@@ -43,7 +43,7 @@
         }
 
         .admin-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -86,7 +86,7 @@
             gap: 24px;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -97,6 +97,7 @@
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
         }
 
         .card-title {
@@ -244,6 +245,21 @@
         .btn-secondary:hover {
             background: var(--white);
             border-color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-error {
+            background: var(--error);
+            color: var(--white);
         }
 
         .action-buttons {
@@ -410,6 +426,171 @@
             margin-bottom: 15px;
         }
 
+        /* Verification System Styles */
+        .verification-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .scan-area {
+            text-align: center;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .camera-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: var(--border);
+            border-radius: 8px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+
+        .ticket-info {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-checked_in { background: #d1fae5; color: #065f46; }
+        .status-exited { background: #fee2e2; color: #dc2626; }
+        .status-used { background: #e5e7eb; color: #374151; }
+
+        .verification-result {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .result-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .result-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--error);
+            color: var(--error);
+        }
+
+        .result-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .entry-log {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            min-width: 60px;
+        }
+
+        .log-action {
+            font-weight: 600;
+            margin: 0 8px;
+            font-size: 0.8rem;
+        }
+
+        .log-reference {
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .verification-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .verification-stat {
+            background: var(--white);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .verification-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .verification-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
         @media (max-width: 480px) {
             .admin-container {
                 padding: 16px;
@@ -430,171 +611,269 @@
             .ticket-options {
                 grid-template-columns: 1fr;
             }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .verification-stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="admin-container">
         <div class="header">
-            <h1>Ticket Generator <span class="admin-badge">ADMIN</span></h1>
-            <p>Create tickets for Man Sango Concert</p>
+            <h1>Man Sango Ticket System <span class="admin-badge">ADMIN</span></h1>
+            <p>Complete Ticket Management & Entry Verification</p>
         </div>
 
         <div class="main-grid">
-            <!-- Left Column - Form -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i class="fas fa-user"></i>
-                    Customer Details
-                </h2>
-                
-                <form id="ticketForm">
-                    <div class="form-group">
-                        <label class="form-label" for="name">Full Name *</label>
-                        <input type="text" id="name" class="form-input" placeholder="Enter customer name" required>
-                    </div>
+            <!-- Left Column - Ticket Generation -->
+            <div>
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-user"></i>
+                        Customer Details
+                    </h2>
                     
-                    <div class="form-group">
-                        <label class="form-label" for="phone">Phone Number *</label>
-                        <input type="tel" id="phone" class="form-input" placeholder="0712345678 or 254712345678" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email (Optional)</label>
-                        <input type="email" id="email" class="form-input" placeholder="customer@email.com">
-                        <small style="color: var(--text-light); font-size: 0.8rem;">
-                            We'll send the e-ticket to this email
-                        </small>
-                    </div>
-                    
-                    <div class="form-row">
+                    <form id="ticketForm">
                         <div class="form-group">
-                            <label class="form-label">Ticket Type *</label>
-                            <div class="ticket-options">
-                                <div class="ticket-option" data-type="Regular" data-price="500">
-                                    <div class="ticket-type">Regular</div>
-                                    <div class="ticket-price">KSH 500</div>
-                                </div>
-                                <div class="ticket-option" data-type="VIP" data-price="1000">
-                                    <div class="ticket-type">VIP</div>
-                                    <div class="ticket-price">KSH 1000</div>
-                                </div>
-                                <div class="ticket-option" data-type="VVIP" data-price="2000">
-                                    <div class="ticket-type">VVIP</div>
-                                    <div class="ticket-price">KSH 2000</div>
-                                </div>
-                            </div>
+                            <label class="form-label" for="name">Full Name *</label>
+                            <input type="text" id="name" class="form-input" placeholder="Enter customer name" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label" for="quantity">Quantity</label>
-                            <select id="quantity" class="form-input">
-                                <option value="1">1 Ticket</option>
-                                <option value="2">2 Tickets</option>
-                                <option value="3">3 Tickets</option>
-                                <option value="4">4 Tickets</option>
-                                <option value="5">5 Tickets</option>
-                            </select>
+                            <label class="form-label" for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="0712345678 or 254712345678" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email (Optional)</label>
+                            <input type="email" id="email" class="form-input" placeholder="customer@email.com">
+                            <small style="color: var(--text-light); font-size: 0.8rem;">
+                                We'll send the e-ticket to this email
+                            </small>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ticket Type *</label>
+                                <div class="ticket-options">
+                                    <div class="ticket-option" data-type="Regular" data-price="500">
+                                        <div class="ticket-type">Regular</div>
+                                        <div class="ticket-price">KSH 500</div>
+                                    </div>
+                                    <div class="ticket-option" data-type="VIP" data-price="1000">
+                                        <div class="ticket-type">VIP</div>
+                                        <div class="ticket-price">KSH 1000</div>
+                                    </div>
+                                    <div class="ticket-option" data-type="VVIP" data-price="2000">
+                                        <div class="ticket-type">VVIP</div>
+                                        <div class="ticket-price">KSH 2000</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="quantity">Quantity</label>
+                                <select id="quantity" class="form-input">
+                                    <option value="1">1 Ticket</option>
+                                    <option value="2">2 Tickets</option>
+                                    <option value="3">3 Tickets</option>
+                                    <option value="4">4 Tickets</option>
+                                    <option value="5">5 Tickets</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="total-section">
+                            <div class="total-label">Total Amount</div>
+                            <div class="total-amount">KSH <span id="totalAmount">0</span></div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" id="generateTicket">
+                            <i class="fas fa-ticket-alt"></i>
+                            Generate Ticket
+                        </button>
+                    </form>
+                    
+                    <div id="formStatus" class="hidden"></div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-eye"></i>
+                        Ticket Preview
+                    </h2>
+                    
+                    <div class="ticket-preview" id="ticketPreview">
+                        <!-- Event Image -->
+                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                             alt="Man Sango Concert" class="event-image">
+                        
+                        <div class="ticket-header">
+                            <!-- Artist Image -->
+                            <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                                 alt="Man Sango" class="artist-image">
+                            <h2>MAN SANGO CONCERT</h2>
+                            <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
+                        </div>
+                        
+                        <div class="ticket-details">
+                            <div class="ticket-detail">
+                                <label>Reference</label>
+                                <span id="previewRef">MS-20251212-ABCDE</span>
+                            </div>
+                            <div class="ticket-detail">
+                                <label>Name</label>
+                                <span id="previewName">Customer Name</span>
+                            </div>
+                            <div class="ticket-detail">
+                                <label>Phone</label>
+                                <span id="previewPhone">254712345678</span>
+                            </div>
+                            <div class="ticket-detail">
+                                <label>Type</label>
+                                <span id="previewType">Regular</span>
+                            </div>
+                            <div class="ticket-detail">
+                                <label>Quantity</label>
+                                <span id="previewQuantity">1</span>
+                            </div>
+                            <div class="ticket-detail">
+                                <label>Amount</label>
+                                <span id="previewAmount">KSH 500</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-qr" id="qrCode">
+                            <div style="color: #666; text-align: center; font-size: 0.8rem;">
+                                <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                                <div>QR CODE</div>
+                                <div>Will be generated</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <p>Present this ticket at venue entry • Non-transferable</p>
                         </div>
                     </div>
                     
-                    <div class="total-section">
-                        <div class="total-label">Total Amount</div>
-                        <div class="total-amount">KSH <span id="totalAmount">0</span></div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="newTicket">
+                            <i class="fas fa-plus"></i>
+                            New Ticket
+                        </button>
+                        <button class="btn btn-primary" id="downloadPDF">
+                            <i class="fas fa-download"></i>
+                            Download PDF
+                        </button>
                     </div>
-                    
-                    <button type="button" class="btn btn-primary" id="generateTicket">
-                        <i class="fas fa-ticket-alt"></i>
-                        Generate Ticket
-                    </button>
-                </form>
-                
-                <div id="formStatus" class="hidden"></div>
+                </div>
             </div>
 
-            <!-- Right Column - Preview & Actions -->
-            <div class="card">
+            <!-- Right Column - Verification System -->
+            <div class="verification-section">
                 <h2 class="card-title">
-                    <i class="fas fa-eye"></i>
-                    Ticket Preview
+                    <i class="fas fa-qrcode"></i>
+                    Entry Verification System
                 </h2>
                 
-                <div class="ticket-preview" id="ticketPreview">
-                    <!-- Event Image - UPDATED URL -->
-                    <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
-                         alt="Man Sango Concert" class="event-image">
-                    
-                    <div class="ticket-header">
-                        <!-- Artist Image - UPDATED URL -->
-                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
-                             alt="Man Sango" class="artist-image">
-                        <h2>MAN SANGO CONCERT</h2>
-                        <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
-                    </div>
-                    
-                    <div class="ticket-details">
-                        <div class="ticket-detail">
-                            <label>Reference</label>
-                            <span id="previewRef">MS-20251212-ABCDE</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <label>Name</label>
-                            <span id="previewName">Customer Name</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <label>Phone</label>
-                            <span id="previewPhone">254712345678</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <label>Type</label>
-                            <span id="previewType">Regular</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <label>Quantity</label>
-                            <span id="previewQuantity">1</span>
-                        </div>
-                        <div class="ticket-detail">
-                            <label>Amount</label>
-                            <span id="previewAmount">KSH 500</span>
+                <div class="scan-area">
+                    <div class="camera-preview" id="cameraPreview">
+                        <div style="text-align: center;">
+                            <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                            <div>Camera Preview</div>
                         </div>
                     </div>
-                    
-                    <div class="ticket-qr" id="qrCode">
-                        <div style="color: #666; text-align: center; font-size: 0.8rem;">
-                            <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
-                            <div>QR CODE</div>
-                            <div>Will be generated</div>
-                        </div>
-                    </div>
-                    
-                    <div class="ticket-footer">
-                        <p>Present this ticket at venue entry • Non-transferable</p>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" id="newTicket">
-                        <i class="fas fa-plus"></i>
-                        New Ticket
-                    </button>
-                    <button class="btn btn-primary" id="downloadPDF">
-                        <i class="fas fa-download"></i>
-                        Download PDF
+                    <button class="btn btn-primary" id="startCamera">
+                        <i class="fas fa-camera"></i>
+                        Start Camera for QR Scan
                     </button>
                 </div>
                 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalTickets">0</div>
-                        <div class="stat-label">Total Tickets</div>
+                <div class="form-group">
+                    <label class="form-label" for="referenceInput">Or Enter Reference Number</label>
+                    <input type="text" id="referenceInput" class="form-input" placeholder="Enter ticket reference (e.g., MS-20251212-ABCDE)">
+                </div>
+                
+                <button class="btn btn-primary" id="verifyTicket">
+                    <i class="fas fa-search"></i>
+                    Verify Ticket
+                </button>
+                
+                <div id="verificationResult" class="verification-result hidden"></div>
+                
+                <!-- Verification Stats -->
+                <div class="verification-stats">
+                    <div class="verification-stat">
+                        <div class="verification-number" id="totalTickets">0</div>
+                        <div class="verification-label">Total Tickets</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="todayTickets">0</div>
-                        <div class="stat-label">Today</div>
+                    <div class="verification-stat">
+                        <div class="verification-number" id="checkedInTickets">0</div>
+                        <div class="verification-label">Checked In</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">KSH <span id="totalRevenue">0</span></div>
-                        <div class="stat-label">Revenue</div>
+                    <div class="verification-stat">
+                        <div class="verification-number" id="insideVenue">0</div>
+                        <div class="verification-label">Inside Now</div>
+                    </div>
+                </div>
+                
+                <div id="ticketDetails" class="ticket-info hidden">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">Ticket Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Reference</div>
+                            <div class="info-value" id="detailReference">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Name</div>
+                            <div class="info-value" id="detailName">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value" id="detailPhone">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Ticket Type</div>
+                            <div class="info-value" id="detailType">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Quantity</div>
+                            <div class="info-value" id="detailQuantity">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                <span class="status-badge" id="detailStatus">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons" id="actionButtons">
+                        <button class="btn btn-success" id="checkInBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Check In
+                        </button>
+                        <button class="btn btn-warning" id="checkOutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Check Out
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="card-title" style="margin-top: 30px;">
+                    <i class="fas fa-list"></i>
+                    Recent Activity
+                </h3>
+                
+                <div class="entry-log" id="entryLog">
+                    <div class="log-item">
+                        <div class="log-time">--:--:--</div>
+                        <div class="log-action">Waiting for activity...</div>
                     </div>
                 </div>
             </div>
@@ -618,18 +897,22 @@
 
         // Global variables
         let currentTicketData = {};
+        let currentVerificationTicket = null;
+        let stream = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadStats();
+            loadVerificationStats();
             setupEventListeners();
+            startRealTimeUpdates();
             
             // Pre-select first ticket option
             document.querySelector('.ticket-option').click();
         });
 
         function setupEventListeners() {
-            // Ticket selection
+            // Ticket Generation
             document.querySelectorAll('.ticket-option').forEach(option => {
                 option.addEventListener('click', function() {
                     document.querySelectorAll('.ticket-option').forEach(opt => {
@@ -640,19 +923,25 @@
                 });
             });
 
-            // Quantity change
             document.getElementById('quantity').addEventListener('change', updateTotalAmount);
-
-            // Generate ticket
             document.getElementById('generateTicket').addEventListener('click', generateTicket);
-
-            // New ticket
             document.getElementById('newTicket').addEventListener('click', resetForm);
-
-            // Download PDF
             document.getElementById('downloadPDF').addEventListener('click', downloadPDF);
+
+            // Verification System
+            document.getElementById('verifyTicket').addEventListener('click', verifyTicket);
+            document.getElementById('checkInBtn').addEventListener('click', checkIn);
+            document.getElementById('checkOutBtn').addEventListener('click', checkOut);
+            document.getElementById('startCamera').addEventListener('click', startCamera);
+            
+            document.getElementById('referenceInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyTicket();
+                }
+            });
         }
 
+        // ========== TICKET GENERATION FUNCTIONS ==========
         function updateTotalAmount() {
             const selectedOption = document.querySelector('.ticket-option.selected');
             const quantity = parseInt(document.getElementById('quantity').value);
@@ -667,7 +956,6 @@
         }
 
         async function generateTicket() {
-            // Validate form
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -678,23 +966,19 @@
                 return;
             }
 
-            // Validate phone
             const validatedPhone = validatePhoneNumber(phone);
             if (!validatedPhone) {
                 showStatus('Please enter valid Kenyan phone number', 'error');
                 return;
             }
 
-            // Show loading
             const generateBtn = document.getElementById('generateTicket');
             generateBtn.classList.add('loading');
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
             try {
-                // Generate reference
                 const reference = generateReference();
                 
-                // Prepare ticket data
                 currentTicketData = {
                     customer_name: name,
                     customer_phone: validatedPhone,
@@ -704,11 +988,10 @@
                     total_amount: parseInt(document.getElementById('totalAmount').textContent),
                     reference: reference,
                     payment_method: 'manual',
-                    status: 'confirmed',
+                    status: 'pending', // Changed from 'confirmed' to 'pending' for verification
                     created_at: new Date().toISOString()
                 };
 
-                // Save to Supabase
                 const { data, error } = await supabase
                     .from('concert_tickets')
                     .insert([currentTicketData])
@@ -716,13 +999,9 @@
 
                 if (error) throw error;
 
-                // Update preview
                 updateTicketPreview();
-                
-                // Generate QR code with all ticket details
                 generateQRCodeWithDetails();
                 
-                // Send email if email is provided
                 let emailSent = false;
                 let emailError = null;
                 
@@ -736,8 +1015,8 @@
                     }
                 }
                 
-                // Reload stats
                 await loadStats();
+                await loadVerificationStats();
                 
                 if (emailSent) {
                     showStatus('Ticket generated successfully! Email sent to customer.', 'success');
@@ -751,7 +1030,6 @@
                 console.error('Error generating ticket:', error);
                 showStatus('Error: ' + error.message, 'error');
             } finally {
-                // Reset loading state
                 generateBtn.classList.remove('loading');
                 generateBtn.innerHTML = '<i class="fas fa-ticket-alt"></i> Generate Ticket';
             }
@@ -770,7 +1048,6 @@
             const qrContainer = document.getElementById('qrCode');
             qrContainer.innerHTML = '';
             
-            // Create QR code data with all ticket information
             const qrData = `MAN SANGO CONCERT
 Reference: ${currentTicketData.reference}
 Name: ${currentTicketData.customer_name}
@@ -783,14 +1060,12 @@ Date: 2025-12-12
 Venue: Echo Lounge, Kisii`;
             
             try {
-                // Use the correct QR code library
                 const typeNumber = 0;
                 const errorCorrectionLevel = 'L';
                 const qr = qrcode(typeNumber, errorCorrectionLevel);
                 qr.addData(qrData);
                 qr.make();
                 
-                // Create SVG element
                 const svgElement = qr.createSvgTag({ 
                     scalable: true,
                     margin: 2
@@ -799,7 +1074,6 @@ Venue: Echo Lounge, Kisii`;
                 
             } catch (error) {
                 console.error('QR Code generation error:', error);
-                // Fallback to simple text display
                 qrContainer.innerHTML = `
                     <div style="color: #666; text-align: center; padding: 20px;">
                         <div style="font-size: 0.9rem; margin-bottom: 10px;">
@@ -818,11 +1092,9 @@ Venue: Echo Lounge, Kisii`;
             console.log('Attempting to send email to:', customerEmail);
             
             try {
-                // Generate QR code as PNG for better email compatibility
                 const qrCodeDataURL = await generateQRCodePNG(ticketData);
                 console.log('QR code generated for email');
                 
-                // Send with EmailJS
                 const result = await sendWithEmailJS(customerEmail, ticketData, qrCodeDataURL);
                 console.log('Email sent successfully:', result);
                 return result;
@@ -853,18 +1125,15 @@ Venue: Echo Lounge, Kisii`;
                     qr.addData(qrData);
                     qr.make();
                     
-                    // Create canvas for PNG conversion
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     const size = 200;
                     canvas.width = size;
                     canvas.height = size;
                     
-                    // Draw white background
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(0, 0, size, size);
                     
-                    // Draw QR code
                     const moduleCount = qr.getModuleCount();
                     const tileSize = size / moduleCount;
                     
@@ -877,19 +1146,16 @@ Venue: Echo Lounge, Kisii`;
                         }
                     }
                     
-                    // Convert to PNG data URL
                     const pngDataUrl = canvas.toDataURL('image/png');
                     resolve(pngDataUrl);
                     
                 } catch (error) {
                     console.error('QR code PNG generation failed:', error);
-                    // Fallback to simple data URL
                     resolve('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
                 }
             });
         }
 
-        // EmailJS implementation
         async function sendWithEmailJS(customerEmail, ticketData, qrCodeDataURL) {
             console.log('Sending with EmailJS to:', customerEmail);
             
@@ -956,7 +1222,6 @@ Venue: Echo Lounge, Kisii`;
             });
             document.getElementById('totalAmount').textContent = '0';
             
-            // Reset QR code
             const qrContainer = document.getElementById('qrCode');
             qrContainer.innerHTML = `
                 <div style="color: #666; text-align: center; font-size: 0.8rem;">
@@ -980,24 +1245,19 @@ Venue: Echo Lounge, Kisii`;
                 downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
                 downloadBtn.disabled = true;
 
-                // Use the existing ticket preview directly - it's simpler and more reliable
                 const ticketElement = document.getElementById('ticketPreview');
                 
-                // Make sure the element is visible and properly sized
                 ticketElement.style.display = 'block';
                 ticketElement.style.width = '500px';
                 ticketElement.style.maxWidth = '500px';
                 ticketElement.style.margin = '0 auto';
                 
-                // Wait a moment for the layout to update
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
-                // Wait for all images to load
                 await waitForImages(ticketElement);
 
-                // Create canvas with simple configuration
                 const canvas = await html2canvas(ticketElement, {
-                    scale: 2, // Good quality
+                    scale: 2,
                     useCORS: true,
                     logging: false,
                     backgroundColor: '#2563eb',
@@ -1009,10 +1269,8 @@ Venue: Echo Lounge, Kisii`;
                     scrollY: 0
                 });
 
-                // Convert to image data
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
                 
-                // Create PDF with A6 size (105mm x 148mm)
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
@@ -1022,25 +1280,20 @@ Venue: Echo Lounge, Kisii`;
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 
-                // Calculate aspect ratio to maintain proportions
                 const aspectRatio = canvas.width / canvas.height;
                 let imgWidth = pdfWidth;
                 let imgHeight = pdfWidth / aspectRatio;
                 
-                // If image is too tall, scale to fit height
                 if (imgHeight > pdfHeight) {
                     imgHeight = pdfHeight;
                     imgWidth = pdfHeight * aspectRatio;
                 }
                 
-                // Center the image on the page
                 const x = (pdfWidth - imgWidth) / 2;
                 const y = (pdfHeight - imgHeight) / 2;
                 
-                // Add image to PDF
                 pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
                 
-                // Save PDF
                 pdf.save(`ManSango_Ticket_${currentTicketData.reference}.pdf`);
                 
                 showStatus('PDF downloaded successfully!', 'success');
@@ -1049,14 +1302,12 @@ Venue: Echo Lounge, Kisii`;
                 console.error('PDF generation error:', error);
                 showStatus('Error generating PDF: ' + error.message, 'error');
             } finally {
-                // Reset download button
                 const downloadBtn = document.getElementById('downloadPDF');
                 downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
                 downloadBtn.disabled = false;
             }
         }
 
-        // Helper function to wait for images to load
         function waitForImages(element) {
             const images = element.getElementsByTagName('img');
             const promises = Array.from(images).map(img => {
@@ -1065,7 +1316,7 @@ Venue: Echo Lounge, Kisii`;
                 } else {
                     return new Promise((resolve) => {
                         img.onload = resolve;
-                        img.onerror = resolve; // Resolve even if image fails to load
+                        img.onerror = resolve;
                     });
                 }
             });
@@ -1074,24 +1325,12 @@ Venue: Echo Lounge, Kisii`;
 
         async function loadStats() {
             try {
-                // Get total tickets from 'concert_tickets' table
                 const { count: totalCount, error: totalError } = await supabase
                     .from('concert_tickets')
                     .select('*', { count: 'exact', head: true });
 
                 if (totalError) throw totalError;
 
-                // Get today's tickets
-                const today = new Date().toISOString().split('T')[0];
-                const { count: todayCount, error: todayError } = await supabase
-                    .from('concert_tickets')
-                    .select('*', { count: 'exact', head: true })
-                    .gte('created_at', today + 'T00:00:00Z')
-                    .lte('created_at', today + 'T23:59:59Z');
-
-                if (todayError) throw todayError;
-
-                // Get total revenue
                 const { data: revenueData, error: revenueError } = await supabase
                     .from('concert_tickets')
                     .select('total_amount');
@@ -1100,10 +1339,7 @@ Venue: Echo Lounge, Kisii`;
 
                 const totalRevenue = revenueData.reduce((sum, ticket) => sum + ticket.total_amount, 0);
 
-                // Update UI
-                document.getElementById('totalTickets').textContent = totalCount || 0;
-                document.getElementById('todayTickets').textContent = todayCount || 0;
-                document.getElementById('totalRevenue').textContent = totalRevenue;
+                // Note: Today tickets removed as we have verification stats now
 
             } catch (error) {
                 console.error('Error loading stats:', error);
@@ -1120,6 +1356,348 @@ Venue: Echo Lounge, Kisii`;
                 statusDiv.classList.add('hidden');
             }, 5000);
         }
+
+        // ========== VERIFICATION SYSTEM FUNCTIONS ==========
+        async function verifyTicket() {
+            const referenceInput = document.getElementById('referenceInput');
+            const reference = referenceInput.value.trim().toUpperCase();
+            
+            if (!reference) {
+                showVerificationResult('Please enter a reference number', 'error');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyTicket');
+            verifyBtn.classList.add('loading');
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const { data: tickets, error } = await supabase
+                    .from('concert_tickets')
+                    .select('*')
+                    .eq('reference', reference);
+
+                if (error) throw error;
+
+                if (!tickets || tickets.length === 0) {
+                    showVerificationResult('Ticket not found', 'error');
+                    resetTicketDetails();
+                    return;
+                }
+
+                currentVerificationTicket = tickets[0];
+                displayTicketDetails(currentVerificationTicket);
+                
+                let message = '';
+                let type = 'success';
+                
+                switch(currentVerificationTicket.status) {
+                    case 'checked_in':
+                        message = 'Ticket already checked in';
+                        type = 'warning';
+                        break;
+                    case 'exited':
+                        message = 'Ticket has exited - Can check in again';
+                        type = 'warning';
+                        break;
+                    case 'used':
+                        message = 'Ticket has been used and exited';
+                        type = 'error';
+                        break;
+                    default:
+                        message = 'Ticket is valid and ready for entry';
+                        type = 'success';
+                }
+                
+                showVerificationResult(message, type);
+                
+            } catch (error) {
+                console.error('Verification error:', error);
+                showVerificationResult('Error verifying ticket: ' + error.message, 'error');
+                resetTicketDetails();
+            } finally {
+                verifyBtn.classList.remove('loading');
+                verifyBtn.innerHTML = '<i class="fas fa-search"></i> Verify Ticket';
+            }
+        }
+
+        function displayTicketDetails(ticket) {
+            document.getElementById('detailReference').textContent = ticket.reference;
+            document.getElementById('detailName').textContent = ticket.customer_name;
+            document.getElementById('detailPhone').textContent = ticket.customer_phone;
+            document.getElementById('detailType').textContent = ticket.ticket_type;
+            document.getElementById('detailQuantity').textContent = ticket.quantity;
+            
+            const statusElement = document.getElementById('detailStatus');
+            statusElement.textContent = ticket.status || 'pending';
+            statusElement.className = 'status-badge';
+            statusElement.classList.add(`status-${ticket.status || 'pending'}`);
+            
+            const actionButtons = document.getElementById('actionButtons');
+            const checkInBtn = document.getElementById('checkInBtn');
+            const checkOutBtn = document.getElementById('checkOutBtn');
+            
+            switch(ticket.status) {
+                case 'checked_in':
+                    checkInBtn.disabled = true;
+                    checkOutBtn.disabled = false;
+                    checkInBtn.innerHTML = '<i class="fas fa-check"></i> Already Checked In';
+                    checkOutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Check Out';
+                    break;
+                case 'exited':
+                    checkInBtn.disabled = false;
+                    checkOutBtn.disabled = true;
+                    checkInBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Check In Again';
+                    checkOutBtn.innerHTML = '<i class="fas fa-times"></i> Already Exited';
+                    break;
+                case 'used':
+                    checkInBtn.disabled = true;
+                    checkOutBtn.disabled = true;
+                    checkInBtn.innerHTML = '<i class="fas fa-ban"></i> Ticket Used';
+                    checkOutBtn.innerHTML = '<i class="fas fa-ban"></i> Ticket Used';
+                    break;
+                default:
+                    checkInBtn.disabled = false;
+                    checkOutBtn.disabled = true;
+                    checkInBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Check In';
+                    checkOutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Check Out';
+            }
+            
+            document.getElementById('ticketDetails').classList.remove('hidden');
+        }
+
+        async function checkIn() {
+            if (!currentVerificationTicket) return;
+            
+            const checkInBtn = document.getElementById('checkInBtn');
+            checkInBtn.classList.add('loading');
+            checkInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const { data, error } = await supabase
+                    .from('concert_tickets')
+                    .update({ 
+                        status: 'checked_in',
+                        checked_in_at: new Date().toISOString(),
+                        last_activity: new Date().toISOString()
+                    })
+                    .eq('reference', currentVerificationTicket.reference)
+                    .select();
+
+                if (error) throw error;
+
+                addToActivityLog(currentVerificationTicket.reference, 'checked_in', currentVerificationTicket.customer_name);
+                
+                showVerificationResult('Successfully checked in!', 'success');
+                currentVerificationTicket.status = 'checked_in';
+                displayTicketDetails(currentVerificationTicket);
+                loadVerificationStats();
+                
+            } catch (error) {
+                console.error('Check-in error:', error);
+                showVerificationResult('Error during check-in: ' + error.message, 'error');
+            } finally {
+                checkInBtn.classList.remove('loading');
+                checkInBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Check In';
+            }
+        }
+
+        async function checkOut() {
+            if (!currentVerificationTicket) return;
+            
+            const checkOutBtn = document.getElementById('checkOutBtn');
+            checkOutBtn.classList.add('loading');
+            checkOutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const nextStatus = currentVerificationTicket.status === 'checked_in' ? 'exited' : 'used';
+                
+                const { data, error } = await supabase
+                    .from('concert_tickets')
+                    .update({ 
+                        status: nextStatus,
+                        checked_out_at: new Date().toISOString(),
+                        last_activity: new Date().toISOString()
+                    })
+                    .eq('reference', currentVerificationTicket.reference)
+                    .select();
+
+                if (error) throw error;
+
+                addToActivityLog(currentVerificationTicket.reference, nextStatus, currentVerificationTicket.customer_name);
+                
+                showVerificationResult(`Successfully checked out! Status: ${nextStatus}`, 'success');
+                currentVerificationTicket.status = nextStatus;
+                displayTicketDetails(currentVerificationTicket);
+                loadVerificationStats();
+                
+            } catch (error) {
+                console.error('Check-out error:', error);
+                showVerificationResult('Error during check-out: ' + error.message, 'error');
+            } finally {
+                checkOutBtn.classList.remove('loading');
+                checkOutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Check Out';
+            }
+        }
+
+        function showVerificationResult(message, type) {
+            const resultDiv = document.getElementById('verificationResult');
+            resultDiv.textContent = message;
+            resultDiv.className = `verification-result result-${type}`;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function resetTicketDetails() {
+            document.getElementById('ticketDetails').classList.add('hidden');
+            currentVerificationTicket = null;
+        }
+
+        async function loadVerificationStats() {
+            try {
+                // Get total tickets
+                const { count: totalCount, error: totalError } = await supabase
+                    .from('concert_tickets')
+                    .select('*', { count: 'exact', head: true });
+
+                if (totalError) throw totalError;
+
+                // Get checked in tickets
+                const { count: checkedInCount, error: checkedInError } = await supabase
+                    .from('concert_tickets')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'checked_in');
+
+                if (checkedInError) throw checkedInError;
+
+                // Calculate inside venue (checked_in - exited)
+                const { count: exitedCount, error: exitedError } = await supabase
+                    .from('concert_tickets')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'exited');
+
+                if (exitedError) throw exitedError;
+
+                const insideVenue = (checkedInCount || 0) - (exitedCount || 0);
+
+                // Update UI
+                document.getElementById('totalTickets').textContent = totalCount || 0;
+                document.getElementById('checkedInTickets').textContent = checkedInCount || 0;
+                document.getElementById('insideVenue').textContent = insideVenue > 0 ? insideVenue : 0;
+
+            } catch (error) {
+                console.error('Error loading verification stats:', error);
+            }
+        }
+
+        function addToActivityLog(reference, action, customerName) {
+            const logContainer = document.getElementById('entryLog');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            
+            const actionText = {
+                'checked_in': 'checked in',
+                'exited': 'exited venue', 
+                'used': 'final exit'
+            }[action] || action;
+            
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <div class="log-time">${timeString}</div>
+                <div class="log-action">${actionText}</div>
+                <div class="log-reference">${reference}</div>
+                <div style="margin-left: auto; font-size: 0.7rem; color: var(--text-light);">
+                    ${customerName}
+                </div>
+            `;
+            
+            logContainer.insertBefore(logItem, logContainer.firstChild);
+            
+            if (logContainer.children.length > 10) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        function startRealTimeUpdates() {
+            const subscription = supabase
+                .channel('ticket-changes')
+                .on('postgres_changes', 
+                    { 
+                        event: '*', 
+                        schema: 'public', 
+                        table: 'concert_tickets' 
+                    }, 
+                    (payload) => {
+                        console.log('Real-time update:', payload);
+                        loadVerificationStats();
+                    }
+                )
+                .subscribe();
+
+            setInterval(loadVerificationStats, 30000);
+        }
+
+        async function startCamera() {
+            const cameraBtn = document.getElementById('startCamera');
+            const cameraPreview = document.getElementById('cameraPreview');
+            
+            try {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                    cameraPreview.innerHTML = `
+                        <div style="text-align: center;">
+                            <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                            <div>Camera Preview</div>
+                        </div>
+                    `;
+                    cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+                    return;
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                
+                cameraPreview.innerHTML = '';
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.playsInline = true;
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.borderRadius = '8px';
+                
+                cameraPreview.appendChild(video);
+                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                
+                simulateQRDetection(video);
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                cameraPreview.innerHTML = `
+                    <div style="text-align: center; color: var(--error);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                        <div>Camera access denied</div>
+                        <div style="font-size: 0.8rem;">Please allow camera access for QR scanning</div>
+                    </div>
+                `;
+            }
+        }
+
+        function simulateQRDetection(video) {
+            console.log('QR scanning simulation active - use reference input for actual verification');
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                const cameraBtn = document.getElementById('startCamera');
+                cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+            }
+        });
     </script>
 </body>
 </html>
