@@ -752,12 +752,11 @@
                     
                     <div class="ticket-preview" id="ticketPreview">
                         <!-- Event Image -->
-                        <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
-                             alt="Man Sango Concert" class="event-image">
+                        <img src="https://vsxlzihjcmgkjqcpsrkc.supabase.co/storage/v1/object/public/pictures/WhatsApp%20Image%202025-11-08%20at%202.53.41%20PM.jpeg">
                         
                         <div class="ticket-header">
                             <!-- Artist Image -->
-                            <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                            <img src="https://vsxlzihjcmgkjqcpsrkc.supabase.co/storage/v1/object/public/pictures/1000032621.jpg" 
                                  alt="Man Sango" class="artist-image">
                             <h2>MAN SANGO CONCERT</h2>
                             <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
@@ -1812,6 +1811,10 @@ Venue: Echo Lounge, Kisii`;
                 const orderRef = referenceMatch[1].trim();
                 document.getElementById('referenceInput').value = orderRef;
                 showVerificationResult(`QR Code detected: ${orderRef}`, 'success');
+                
+                // STOP CAMERA IMMEDIATELY AFTER SUCCESSFUL SCAN
+                stopCamera();
+                
                 performVerification(orderRef);
             } else {
                 // Try to find any MS- reference pattern
@@ -1820,6 +1823,10 @@ Venue: Echo Lounge, Kisii`;
                     const orderRef = msReference[1];
                     document.getElementById('referenceInput').value = orderRef;
                     showVerificationResult(`QR Code detected: ${orderRef}`, 'success');
+                    
+                    // STOP CAMERA IMMEDIATELY AFTER SUCCESSFUL SCAN
+                    stopCamera();
+                    
                     performVerification(orderRef);
                 } else {
                     showVerificationResult('QR Code detected but no valid reference found', 'error');
