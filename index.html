@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Man Sango Ticket System</title>
+    <title>Man Sango Ticket System</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,23 +44,96 @@
             padding: 0;
         }
 
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Navigation Styles */
+        .nav-container {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+        }
+
+        .logo h1 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .logo-badge {
+            background: var(--accent);
+            color: var(--white);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-link i {
+            font-size: 1rem;
+        }
+
+        .nav-link span {
+            display: none;
+        }
+
+        /* Page Container */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Common Components */
         .header {
             background: var(--white);
             border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
 
         .header h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 8px;
             font-weight: 700;
@@ -68,48 +141,45 @@
 
         .header p {
             color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        .admin-badge {
-            background: var(--accent);
-            color: var(--white);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-left: 10px;
+            font-size: 0.9rem;
         }
 
         .main-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: 20px;
         }
 
-        @media (min-width: 1024px) {
+        @media (min-width: 768px) {
             .main-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+            
+            .nav-link span {
+                display: inline;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
             }
         }
 
         .card {
             background: var(--white);
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .card-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .card-title i {
@@ -117,12 +187,12 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: var(--text);
             font-size: 0.9rem;
@@ -130,7 +200,7 @@
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 14px;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 1rem;
@@ -147,7 +217,7 @@
         .form-row {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 12px;
         }
 
         @media (min-width: 480px) {
@@ -158,16 +228,16 @@
 
         .ticket-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
         }
 
         .ticket-option {
             background: var(--white);
             border: 2px solid var(--border);
             border-radius: 8px;
-            padding: 16px;
+            padding: 14px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -180,34 +250,34 @@
         }
 
         .ticket-type {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .ticket-price {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
         }
 
         .total-section {
             background: var(--light-bg);
-            padding: 20px;
+            padding: 16px;
             border-radius: 8px;
             text-align: center;
-            margin: 20px 0;
+            margin: 16px 0;
         }
 
         .total-label {
             font-size: 0.9rem;
             color: var(--text-light);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .total-amount {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
         }
@@ -217,10 +287,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 14px 24px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -267,8 +337,8 @@
         .action-buttons {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 16px;
         }
 
         @media (min-width: 480px) {
@@ -280,23 +350,23 @@
         .ticket-preview {
             background: var(--primary);
             color: white;
-            padding: 24px;
+            padding: 20px;
             border-radius: 12px;
             text-align: center;
             position: relative;
             overflow: hidden;
             width: 100%;
-            max-width: 500px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
         .ticket-header {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .artist-image {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--accent);
@@ -304,21 +374,21 @@
         }
 
         .ticket-header h2 {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             margin-bottom: 4px;
             color: var(--accent);
         }
 
         .ticket-header p {
             opacity: 0.9;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .ticket-details {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 20px 0;
+            gap: 10px;
+            margin: 16px 0;
         }
 
         @media (min-width: 480px) {
@@ -329,47 +399,48 @@
 
         .ticket-detail {
             background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             text-align: left;
         }
 
         .ticket-detail label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             opacity: 0.8;
             margin-bottom: 4px;
         }
 
         .ticket-detail span {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
 
         .ticket-qr {
-            margin: 20px auto;
-            width: 160px;
-            height: 160px;
+            margin: 16px auto;
+            width: 140px;
+            height: 140px;
             background: var(--white);
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px;
         }
 
         .ticket-footer {
-            margin-top: 20px;
-            font-size: 0.8rem;
+            margin-top: 16px;
+            font-size: 0.75rem;
             opacity: 0.8;
         }
 
         .status-message {
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 8px;
-            margin: 16px 0;
+            margin: 14px 0;
             text-align: center;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .status-success {
@@ -391,27 +462,27 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 16px;
         }
 
         .stat-card {
             background: var(--white);
-            padding: 16px;
+            padding: 14px;
             border-radius: 8px;
             text-align: center;
             border: 1px solid var(--border);
         }
 
         .stat-number {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-light);
         }
 
@@ -422,36 +493,36 @@
 
         .event-image {
             width: 100%;
-            height: 120px;
+            height: 100px;
             object-fit: cover;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         /* Verification System Styles */
         .verification-section {
             background: var(--white);
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .scan-area {
             text-align: center;
-            padding: 20px;
+            padding: 16px;
             background: var(--light-bg);
             border-radius: 12px;
-            margin: 20px 0;
+            margin: 16px 0;
             position: relative;
         }
 
         .camera-preview {
             width: 100%;
-            max-width: 300px;
+            max-width: 100%;
             height: 200px;
             background: var(--border);
             border-radius: 8px;
-            margin: 0 auto 20px;
+            margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -494,38 +565,44 @@
 
         .ticket-info {
             background: var(--light-bg);
-            padding: 20px;
+            padding: 16px;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 16px 0;
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .info-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .info-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-light);
             margin-bottom: 4px;
         }
 
         .info-value {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--text);
         }
 
         .status-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -536,12 +613,12 @@
         .status-used { background: #e5e7eb; color: #374151; }
 
         .verification-result {
-            padding: 20px;
+            padding: 16px;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 16px 0;
             text-align: center;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .result-success {
@@ -563,20 +640,21 @@
         }
 
         .entry-log {
-            margin-top: 20px;
-            max-height: 300px;
+            margin-top: 16px;
+            max-height: 250px;
             overflow-y: auto;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px;
         }
 
         .log-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
         }
 
         .log-item:last-child {
@@ -584,47 +662,47 @@
         }
 
         .log-time {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-light);
-            min-width: 60px;
+            min-width: 50px;
         }
 
         .log-action {
             font-weight: 600;
-            margin: 0 8px;
-            font-size: 0.8rem;
+            margin: 0 6px;
+            font-size: 0.75rem;
         }
 
         .log-reference {
             color: var(--primary);
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .verification-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+            gap: 8px;
+            margin: 12px 0;
         }
 
         .verification-stat {
             background: var(--white);
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             text-align: center;
             border: 1px solid var(--border);
         }
 
         .verification-number {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 4px;
         }
 
         .verification-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-light);
         }
 
@@ -633,21 +711,143 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
+        /* Dashboard Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .dashboard-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .dashboard-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .dashboard-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .recent-activity {
+            margin-top: 20px;
+        }
+
+        .activity-list {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            min-width: 70px;
+        }
+
+        .activity-action {
+            font-weight: 600;
+            margin: 0 8px;
+        }
+
+        .activity-reference {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Mobile-specific improvements */
+        .mobile-optimized {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .ticket-option:active {
+            transform: scale(0.98);
+        }
+
+        .nav-link:active {
+            transform: scale(0.98);
+        }
+
+        /* Camera controls */
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .camera-controls .btn {
+            flex: 1;
+        }
+
         @media (max-width: 480px) {
-            .admin-container {
-                padding: 16px;
+            .nav-content {
+                flex-direction: column;
+                padding: 8px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
+            
+            .nav-link {
+                flex: 1;
+                justify-content: center;
+                padding: 8px;
+            }
+            
+            .page-container {
+                padding: 12px;
             }
             
             .header {
-                padding: 20px;
+                padding: 16px;
             }
             
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
             
             .card {
-                padding: 20px;
+                padding: 16px;
             }
             
             .ticket-options {
@@ -661,165 +861,276 @@
             .verification-stats {
                 grid-template-columns: 1fr;
             }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ticket-preview {
+                padding: 16px;
+            }
+            
+            .ticket-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .camera-preview {
+                height: 180px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <div class="header">
-            <h1>Man Sango Ticket System <span class="admin-badge">ADMIN</span></h1>
-            <p>Complete Ticket Management & Entry Verification</p>
+    <!-- Navigation -->
+    <div class="nav-container">
+        <div class="nav-content">
+            <div class="logo">
+                <h1>Man Sango</h1>
+                <span class="logo-badge">ADMIN</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-link" data-page="booking">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Booking</span>
+                </a>
+                <a href="#" class="nav-link" data-page="verification">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Verification</span>
+                </a>
+            </div>
         </div>
+    </div>
 
-        <div class="main-grid">
-            <!-- Left Column - Ticket Generation -->
-            <div>
-                <div class="card">
-                    <h2 class="card-title">
-                        <i class="fas fa-user"></i>
-                        Customer Details
-                    </h2>
-                    
-                    <form id="ticketForm">
-                        <div class="form-group">
-                            <label class="form-label" for="name">Full Name *</label>
-                            <input type="text" id="name" class="form-input" placeholder="Enter customer name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="phone">Phone Number *</label>
-                            <input type="tel" id="phone" class="form-input" placeholder="0712345678 or 254712345678" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="email">Email (Optional)</label>
-                            <input type="email" id="email" class="form-input" placeholder="customer@email.com">
-                            <small style="color: var(--text-light); font-size: 0.8rem;">
-                                We'll send the e-ticket to this email
-                            </small>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Ticket Type *</label>
-                                <div class="ticket-options">
-                                    <div class="ticket-option" data-type="Regular" data-price="500">
-                                        <div class="ticket-type">Regular</div>
-                                        <div class="ticket-price">KSH 500</div>
-                                    </div>
-                                    <div class="ticket-option" data-type="VIP" data-price="1000">
-                                        <div class="ticket-type">VIP</div>
-                                        <div class="ticket-price">KSH 1000</div>
-                                    </div>
-                                    <div class="ticket-option" data-type="VVIP" data-price="2000">
-                                        <div class="ticket-type">VVIP</div>
-                                        <div class="ticket-price">KSH 2000</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="quantity">Quantity</label>
-                                <select id="quantity" class="form-input">
-                                    <option value="1">1 Ticket</option>
-                                    <option value="2">2 Tickets</option>
-                                    <option value="3">3 Tickets</option>
-                                    <option value="4">4 Tickets</option>
-                                    <option value="5">5 Tickets</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="total-section">
-                            <div class="total-label">Total Amount</div>
-                            <div class="total-amount">KSH <span id="totalAmount">0</span></div>
-                        </div>
-                        
-                        <button type="button" class="btn btn-primary" id="generateTicket">
-                            <i class="fas fa-ticket-alt"></i>
-                            Generate Ticket
-                        </button>
-                    </form>
-                    
-                    <div id="formStatus" class="hidden"></div>
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="header">
+                <h1>Admin Dashboard</h1>
+                <p>Overview of ticket sales and event statistics</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="dashboard-number" id="dashboard-total-tickets">0</div>
+                    <div class="dashboard-label">Total Tickets</div>
                 </div>
-
-                <div class="card">
-                    <h2 class="card-title">
-                        <i class="fas fa-eye"></i>
-                        Ticket Preview
-                    </h2>
-                    
-                    <div class="ticket-preview" id="ticketPreview">
-                        <!-- Event Image -->
-                        <img src=" ">
-                        
-                        <div class="ticket-header">
-                            <!-- Artist Image -->
-                            <img src="https://vsxlzihjcmgkjqcpsrkc.supabase.co/storage/v1/object/public/shows/WhatsApp%20Image%202025-11-10%20at%207.18.11%20PM%20(2).jpeg" 
-                                 alt="Man Sango" class="artist-image">
-                            <h2>MAN SANGO CONCERT</h2>
-                            <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
-                        </div>
-                        
-                        <div class="ticket-details">
-                            <div class="ticket-detail">
-                                <label>Reference</label>
-                                <span id="previewRef">MS-20251212-ABCDE</span>
-                            </div>
-                            <div class="ticket-detail">
-                                <label>Name</label>
-                                <span id="previewName">Customer Name</span>
-                            </div>
-                            <div class="ticket-detail">
-                                <label>Phone</label>
-                                <span id="previewPhone">254712345678</span>
-                            </div>
-                            <div class="ticket-detail">
-                                <label>Type</label>
-                                <span id="previewType">Regular</span>
-                            </div>
-                            <div class="ticket-detail">
-                                <label>Quantity</label>
-                                <span id="previewQuantity">1</span>
-                            </div>
-                            <div class="ticket-detail">
-                                <label>Amount</label>
-                                <span id="previewAmount">KSH 500</span>
-                            </div>
-                        </div>
-                        
-                        <div class="ticket-qr" id="qrCode">
-                            <div style="color: #666; text-align: center; font-size: 0.8rem;">
-                                <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
-                                <div>QR CODE</div>
-                                <div>Will be generated</div>
-                            </div>
-                        </div>
-                        
-                        <div class="ticket-footer">
-                            <p>Present this ticket at venue entry • Non-transferable</p>
-                        </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-secondary" id="newTicket">
-                            <i class="fas fa-plus"></i>
-                            New Ticket
-                        </button>
-                        <button class="btn btn-primary" id="downloadPDF">
-                            <i class="fas fa-download"></i>
-                            Download PDF
-                        </button>
+                    <div class="dashboard-number" id="dashboard-checked-in">0</div>
+                    <div class="dashboard-label">Checked In</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">
+                        <i class="fas fa-users"></i>
                     </div>
+                    <div class="dashboard-number" id="dashboard-inside-venue">0</div>
+                    <div class="dashboard-label">Inside Venue</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="dashboard-number">KSH <span id="dashboard-revenue">0</span></div>
+                    <div class="dashboard-label">Total Revenue</div>
                 </div>
             </div>
 
-            <!-- Right Column - Verification System -->
+            <div class="recent-activity">
+                <h2 class="card-title">
+                    <i class="fas fa-list"></i>
+                    Recent Activity
+                </h2>
+                <div class="activity-list" id="dashboard-activity">
+                    <div class="activity-item">
+                        <div class="activity-time">--:--:--</div>
+                        <div class="activity-action">Waiting for activity...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Booking Page -->
+        <div id="booking-page" class="page hidden">
+            <div class="header">
+                <h1>Ticket Booking System</h1>
+                <p>Generate and manage event tickets</p>
+            </div>
+
+            <div class="main-grid">
+                <!-- Left Column - Ticket Generation -->
+                <div>
+                    <div class="card">
+                        <h2 class="card-title">
+                            <i class="fas fa-user"></i>
+                            Customer Details
+                        </h2>
+                        
+                        <form id="ticketForm">
+                            <div class="form-group">
+                                <label class="form-label" for="name">Full Name *</label>
+                                <input type="text" id="name" class="form-input" placeholder="Enter customer name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" class="form-input" placeholder="0712345678 or 254712345678" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email (Optional)</label>
+                                <input type="email" id="email" class="form-input" placeholder="customer@email.com">
+                                <small style="color: var(--text-light); font-size: 0.8rem;">
+                                    We'll send the e-ticket to this email
+                                </small>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Ticket Type *</label>
+                                    <div class="ticket-options">
+                                        <div class="ticket-option" data-type="Regular" data-price="500">
+                                            <div class="ticket-type">Regular</div>
+                                            <div class="ticket-price">KSH 500</div>
+                                        </div>
+                                        <div class="ticket-option" data-type="VIP" data-price="1000">
+                                            <div class="ticket-type">VIP</div>
+                                            <div class="ticket-price">KSH 1000</div>
+                                        </div>
+                                        <div class="ticket-option" data-type="VVIP" data-price="2000">
+                                            <div class="ticket-type">VVIP</div>
+                                            <div class="ticket-price">KSH 2000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="quantity">Quantity</label>
+                                    <select id="quantity" class="form-input">
+                                        <option value="1">1 Ticket</option>
+                                        <option value="2">2 Tickets</option>
+                                        <option value="3">3 Tickets</option>
+                                        <option value="4">4 Tickets</option>
+                                        <option value="5">5 Tickets</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="total-section">
+                                <div class="total-label">Total Amount</div>
+                                <div class="total-amount">KSH <span id="totalAmount">0</span></div>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary mobile-optimized" id="generateTicket">
+                                <i class="fas fa-ticket-alt"></i>
+                                Generate Ticket
+                            </button>
+                        </form>
+                        
+                        <div id="formStatus" class="hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Ticket Preview -->
+                <div>
+                    <div class="card">
+                        <h2 class="card-title">
+                            <i class="fas fa-eye"></i>
+                            Ticket Preview
+                        </h2>
+                        
+                        <div class="ticket-preview" id="ticketPreview">
+                            <!-- Event Image -->
+                            <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                                 alt="Man Sango Concert" class="event-image">
+                            
+                            <div class="ticket-header">
+                                <!-- Artist Image -->
+                                <img src="https://kzrrqbkirnemawtgcwpt.supabase.co/storage/v1/object/public/Pictures/WhatsApp%20Image%202025-11-10%20at%207.42.31%20PM.jpeg" 
+                                     alt="Man Sango" class="artist-image">
+                                <h2>MAN SANGO CONCERT</h2>
+                                <p>Echo Lounge, Kisii • Dec 12, 2025 • 4:00 PM</p>
+                            </div>
+                            
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <label>Reference</label>
+                                    <span id="previewRef">MS-20251212-ABCDE</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <label>Name</label>
+                                    <span id="previewName">Customer Name</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <label>Phone</label>
+                                    <span id="previewPhone">254712345678</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <label>Type</label>
+                                    <span id="previewType">Regular</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <label>Quantity</label>
+                                    <span id="previewQuantity">1</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <label>Amount</label>
+                                    <span id="previewAmount">KSH 500</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ticket-qr" id="qrCode">
+                                <div style="color: #666; text-align: center; font-size: 0.8rem;">
+                                    <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                                    <div>QR CODE</div>
+                                    <div>Will be generated</div>
+                                </div>
+                            </div>
+                            
+                            <div class="ticket-footer">
+                                <p>Present this ticket at venue entry • Non-transferable</p>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary mobile-optimized" id="newTicket">
+                                <i class="fas fa-plus"></i>
+                                New Ticket
+                            </button>
+                            <button class="btn btn-primary mobile-optimized" id="downloadPDF">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entry Verification Page -->
+        <div id="verification-page" class="page hidden">
+            <div class="header">
+                <h1>Entry Verification System</h1>
+                <p>Scan and verify tickets at venue entry</p>
+            </div>
+
             <div class="verification-section">
                 <h2 class="card-title">
                     <i class="fas fa-qrcode"></i>
-                    Entry Verification System
+                    Ticket Verification
                 </h2>
                 
                 <div class="scan-area">
@@ -830,10 +1141,16 @@
                             <div style="font-size: 0.8rem; margin-top: 5px;">Click Start Camera to begin scanning</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="startCamera">
-                        <i class="fas fa-camera"></i>
-                        Start Camera for QR Scan
-                    </button>
+                    <div class="camera-controls">
+                        <button class="btn btn-primary mobile-optimized" id="startCamera">
+                            <i class="fas fa-camera"></i>
+                            Start Camera
+                        </button>
+                        <button class="btn btn-secondary mobile-optimized hidden" id="stopCamera">
+                            <i class="fas fa-stop"></i>
+                            Stop Camera
+                        </button>
+                    </div>
                     <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-light);">
                         <i class="fas fa-info-circle"></i> Point camera at QR code for automatic detection
                     </div>
@@ -844,7 +1161,7 @@
                     <input type="text" id="referenceInput" class="form-input" placeholder="Enter order reference (e.g., MS-20251212-ABCDE)">
                 </div>
                 
-                <button class="btn btn-primary" id="verifyTicket">
+                <button class="btn btn-primary mobile-optimized" id="verifyTicket">
                     <i class="fas fa-search"></i>
                     Verify Ticket
                 </button>
@@ -899,11 +1216,11 @@
                     </div>
                     
                     <div class="action-buttons" id="actionButtons">
-                        <button class="btn btn-success" id="checkInBtn">
+                        <button class="btn btn-success mobile-optimized" id="checkInBtn">
                             <i class="fas fa-sign-in-alt"></i>
                             Check In
                         </button>
-                        <button class="btn btn-warning" id="checkOutBtn">
+                        <button class="btn btn-warning mobile-optimized" id="checkOutBtn">
                             <i class="fas fa-sign-out-alt"></i>
                             Check Out
                         </button>
@@ -949,11 +1266,13 @@
         let stream = null;
         let codeReader = null;
         let isScanning = false;
+        let cameraActive = false;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadVerificationStats();
+            initializeNavigation();
             setupEventListeners();
+            loadVerificationStats();
             startRealTimeUpdates();
             
             // Pre-select first ticket option
@@ -963,6 +1282,39 @@
             codeReader = new BrowserQRCodeReader();
             console.log('ZXing QR Code Reader initialized');
         });
+
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active nav link
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding page
+                    const pageId = this.getAttribute('data-page') + '-page';
+                    pages.forEach(page => {
+                        page.classList.add('hidden');
+                        page.classList.remove('active');
+                    });
+                    
+                    const targetPage = document.getElementById(pageId);
+                    targetPage.classList.remove('hidden');
+                    targetPage.classList.add('active');
+                    
+                    // Load specific data for the page
+                    if (pageId === 'dashboard-page') {
+                        loadDashboardData();
+                    } else if (pageId === 'verification-page') {
+                        loadVerificationStats();
+                    }
+                });
+            });
+        }
 
         function setupEventListeners() {
             // Ticket Generation
@@ -986,12 +1338,108 @@
             document.getElementById('checkInBtn').addEventListener('click', checkIn);
             document.getElementById('checkOutBtn').addEventListener('click', checkOut);
             document.getElementById('startCamera').addEventListener('click', startCamera);
+            document.getElementById('stopCamera').addEventListener('click', stopCamera);
             
             document.getElementById('referenceInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     verifyTicket();
                 }
             });
+        }
+
+        // ========== DASHBOARD FUNCTIONS ==========
+        async function loadDashboardData() {
+            try {
+                // Get total tickets
+                const { count: totalCount, error: totalError } = await supabase
+                    .from('ticket_orders')
+                    .select('*', { count: 'exact', head: true });
+
+                if (totalError) throw totalError;
+
+                // Get checked in tickets
+                const { count: checkedInCount, error: checkedInError } = await supabase
+                    .from('ticket_orders')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'checked_in');
+
+                if (checkedInError) throw checkedInError;
+
+                // Calculate inside venue (checked_in - exited)
+                const { count: exitedCount, error: exitedError } = await supabase
+                    .from('ticket_orders')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'exited');
+
+                if (exitedError) throw exitedError;
+
+                const insideVenue = (checkedInCount || 0) - (exitedCount || 0);
+
+                // Get total revenue
+                const { data: revenueData, error: revenueError } = await supabase
+                    .from('ticket_orders')
+                    .select('total_amount');
+
+                if (revenueError) throw revenueError;
+
+                const totalRevenue = revenueData.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+                // Update dashboard
+                document.getElementById('dashboard-total-tickets').textContent = totalCount || 0;
+                document.getElementById('dashboard-checked-in').textContent = checkedInCount || 0;
+                document.getElementById('dashboard-inside-venue').textContent = insideVenue > 0 ? insideVenue : 0;
+                document.getElementById('dashboard-revenue').textContent = totalRevenue;
+
+                // Load recent activity
+                loadDashboardActivity();
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        async function loadDashboardActivity() {
+            try {
+                const { data: activities, error } = await supabase
+                    .from('ticket_orders')
+                    .select('*')
+                    .order('last_activity', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                const activityList = document.getElementById('dashboard-activity');
+                activityList.innerHTML = '';
+
+                if (!activities || activities.length === 0) {
+                    activityList.innerHTML = `
+                        <div class="activity-item">
+                            <div class="activity-time">--:--:--</div>
+                            <div class="activity-action">No recent activity</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                activities.forEach(activity => {
+                    const activityTime = activity.last_activity ? 
+                        new Date(activity.last_activity).toLocaleTimeString() : '--:--:--';
+                    
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `
+                        <div class="activity-time">${activityTime}</div>
+                        <div class="activity-action">${activity.customer_name}</div>
+                        <div class="activity-reference">${activity.order_ref}</div>
+                        <div class="status-badge status-${activity.status || 'pending'}">${activity.status || 'pending'}</div>
+                    `;
+                    
+                    activityList.appendChild(activityItem);
+                });
+
+            } catch (error) {
+                console.error('Error loading dashboard activity:', error);
+            }
         }
 
         // ========== TICKET GENERATION FUNCTIONS ==========
@@ -1039,10 +1487,11 @@
                     ticket_type: selectedOption.getAttribute('data-type'),
                     quantity: parseInt(document.getElementById('quantity').value),
                     total_amount: parseInt(document.getElementById('totalAmount').textContent),
-                    order_ref: orderRef, // Changed from 'reference' to 'order_ref'
+                    order_ref: orderRef,
                     payment_method: 'manual',
                     status: 'pending',
-                    created_at: new Date().toISOString()
+                    created_at: new Date().toISOString(),
+                    last_activity: new Date().toISOString()
                 };
 
                 // Store in ticket_orders table with order_ref
@@ -1071,6 +1520,7 @@
                 }
                 
                 await loadVerificationStats();
+                await loadDashboardData();
                 
                 if (emailSent) {
                     showStatus('Ticket generated successfully! Email sent to customer.', 'success');
@@ -1528,6 +1978,7 @@ Venue: Echo Lounge, Kisii`;
                 currentVerificationTicket.status = 'checked_in';
                 displayTicketDetails(currentVerificationTicket);
                 loadVerificationStats();
+                loadDashboardData();
                 
             } catch (error) {
                 console.error('Check-in error:', error);
@@ -1566,6 +2017,7 @@ Venue: Echo Lounge, Kisii`;
                 currentVerificationTicket.status = nextStatus;
                 displayTicketDetails(currentVerificationTicket);
                 loadVerificationStats();
+                loadDashboardData();
                 
             } catch (error) {
                 console.error('Check-out error:', error);
@@ -1673,26 +2125,32 @@ Venue: Echo Lounge, Kisii`;
                     (payload) => {
                         console.log('Real-time update:', payload);
                         loadVerificationStats();
+                        loadDashboardData();
                     }
                 )
                 .subscribe();
 
             setInterval(loadVerificationStats, 30000);
+            setInterval(loadDashboardData, 30000);
         }
 
         // ========== ADVANCED QR CODE SCANNING ==========
         async function startCamera() {
             const cameraBtn = document.getElementById('startCamera');
+            const stopBtn = document.getElementById('stopCamera');
             const cameraPreview = document.getElementById('cameraPreview');
             const scanArea = document.querySelector('.scan-area');
             
             try {
-                if (stream) {
-                    // Stop existing stream and scanning
-                    await stopCamera();
+                if (cameraActive) {
                     return;
                 }
 
+                // Update UI immediately
+                cameraBtn.classList.add('hidden');
+                stopBtn.classList.remove('hidden');
+                cameraActive = true;
+                
                 // Camera constraints for better performance
                 const constraints = {
                     video: {
@@ -1724,7 +2182,6 @@ Venue: Echo Lounge, Kisii`;
                 cameraPreview.appendChild(overlay);
                 
                 // Update UI
-                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
                 scanArea.classList.add('scanner-active');
                 
                 // Wait for video to be ready
@@ -1743,6 +2200,10 @@ Venue: Echo Lounge, Kisii`;
                         <div style="font-size: 0.8rem;">Please allow camera access for QR scanning</div>
                     </div>
                 `;
+                // Reset UI on error
+                cameraBtn.classList.remove('hidden');
+                stopBtn.classList.add('hidden');
+                cameraActive = false;
             }
         }
 
@@ -1753,9 +2214,11 @@ Venue: Echo Lounge, Kisii`;
             }
             
             isScanning = false;
+            cameraActive = false;
             
             const cameraPreview = document.getElementById('cameraPreview');
             const cameraBtn = document.getElementById('startCamera');
+            const stopBtn = document.getElementById('stopCamera');
             const scanArea = document.querySelector('.scan-area');
             
             cameraPreview.innerHTML = `
@@ -1766,7 +2229,8 @@ Venue: Echo Lounge, Kisii`;
                 </div>
             `;
             
-            cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera for QR Scan';
+            cameraBtn.classList.remove('hidden');
+            stopBtn.classList.add('hidden');
             scanArea.classList.remove('scanner-active');
         }
 
